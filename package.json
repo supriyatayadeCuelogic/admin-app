@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
   "name": "page-admin",
-=======
-  "name": "admin-app",
->>>>>>> 9a3fd70bcd463437788d50c0090db122b0e4c19d
   "version": "0.1.0",
   "private": true,
   "dependencies": {
