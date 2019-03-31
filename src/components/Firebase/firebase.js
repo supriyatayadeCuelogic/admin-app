@@ -1,14 +1,15 @@
 import app from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
+import * as CONFIG from './../../constants/firebase';
 
 const config = {
-  apiKey: "AIzaSyCLrOVayyVs789lbmdfqIV_HmY0KCMjyHo",
-    authDomain: "firedux-todo-d001f.firebaseapp.com",
-    databaseURL: "https://firedux-todo-d001f.firebaseio.com",
-    projectId: "firedux-todo-d001f",
-    storageBucket: "firedux-todo-d001f.appspot.com",
-    messagingSenderId: "62973711247"
+    apiKey: CONFIG.apiKey,
+    authDomain: CONFIG.authDomain,
+    databaseURL: CONFIG.databaseURL,
+    projectId: CONFIG.projectId,
+    storageBucket: CONFIG.storageBucket,
+    messagingSenderId: CONFIG.messagingSenderId
 };
 
 class Firebase {
@@ -38,10 +39,6 @@ class Firebase {
           .once('value')
           .then(snapshot => {
             const dbUser = snapshot.val();
-
-            if (!dbUser.roles) {
-              dbUser.roles = [];
-            }
 
             authUser = {
               uid: authUser.uid,
