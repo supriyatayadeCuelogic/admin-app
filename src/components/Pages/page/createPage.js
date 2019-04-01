@@ -1,5 +1,5 @@
 import React ,{Component} from 'react';
-import { AuthUserContext } from './../../Session';
+import { AuthUserContext } from './../../Auth';
 import { withFirebase } from './../../Firebase';
 // import { compose } from 'recompose';
 

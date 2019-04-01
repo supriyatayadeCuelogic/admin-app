@@ -1,22 +1,53 @@
-import React ,{Component} from 'react';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import * as router from './../../constants/routes';
 
-class Home extends Component{
-    constructor(props){
+class Pages extends Component {
+    constructor(props) {
         super(props);
 
-        this.state={
-            loading:true,
-            list:[]
+        this.state = {
+            loading: true,
+            list: []
         }
     }
 
-    render(){
+    edit = (event,post) =>{
+        this.props.editPage(post.uid); 
+        this.props.history.push(router.EDIT_PAGE+'/'+post.uid);
+    }
+
+    render() {
         return (
             <React.Fragment>
-                PAGES
+                {this.props.loading && <div>Loading....</div>}
+                <ul>
+                    {
+                        this.props.data.map(key => (
+                            <li key={key}>{key.title}
+                                <button onClick={event=>this.edit(event,key)}> Edit </button>
+                                <button onClick={this.delete}> Delete </button>
+                            </li>
+                        ))
+                    }
+                </ul>
             </React.Fragment>
         );
     }
 }
 
-export default Home;
+const mapStateToProps = (state) => ({
+    loading: state.loading
+})
+
+const mapDispatchToProps = dispatch => ({
+    editPage: page =>
+      dispatch({ type: 'EDIT_PAGE', id:page.uid })
+  });
+
+export default compose(
+    withRouter,
+    connect(mapStateToProps,mapDispatchToProps))
+    (Pages);

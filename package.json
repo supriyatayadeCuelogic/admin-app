@@ -7,9 +7,11 @@
     "react": "^16.8.6",
     "react-compose": "^2.0.0",
     "react-dom": "^16.8.6",
+    "react-redux": "^6.0.1",
     "react-router-dom": "^5.0.0",
     "react-scripts": "2.1.8",
-    "recompose": "^0.30.0"
+    "recompose": "^0.30.0",
+    "redux": "^4.0.1"
   },
   "scripts": {
     "start": "react-scripts start",

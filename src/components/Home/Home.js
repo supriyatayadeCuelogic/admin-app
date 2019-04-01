@@ -1,5 +1,8 @@
 import React ,{Component} from 'react';
 import { withFirebase } from './../Firebase';
+import { connect } from 'react-redux';
+
+import Pages from './../Pages';
 
 class Home extends Component{
 
@@ -46,15 +49,8 @@ class Home extends Component{
     render(){
         const{pages,loading} = this.state;
         return (
-            <React.Fragment>
-                {loading && <div>Loading....</div>}
-                <ul>
-                {
-                    pages.map(key=>(
-                        <li key={key}>{key.title}</li>
-                    ))
-                }
-                </ul>
+            <React.Fragment>                
+                <Pages data={this.state.pages} />
             </React.Fragment>
         );
     }

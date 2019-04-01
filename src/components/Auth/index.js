@@ -1,11 +1,11 @@
 import AuthUserContext from './context';
-import withAuthentication from './withAuthentication';
+import withUserAuthentication from './withUserAuthentication';
 import withAuthorization from './withAuthorization';
 import withEmailVerification from './withEmailVerification';
 
 export {
   AuthUserContext,
-  withAuthentication,
+  withUserAuthentication,
   withAuthorization,
   withEmailVerification,
 };

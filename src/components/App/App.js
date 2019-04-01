@@ -4,7 +4,7 @@ import Navigation from './../Navigation';
 import './App.css';
 import Home from './../Home';
 import * as routers from './../../constants/routes';
-import { withAuthentication } from '../Session';
+import { withUserAuthentication } from '../Auth';
 
 class App extends Component {
   render() {
@@ -20,4 +20,4 @@ class App extends Component {
   }
 }
 
-export default withAuthentication(App);
+export default withUserAuthentication(App);
