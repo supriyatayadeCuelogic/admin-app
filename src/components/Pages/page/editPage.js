@@ -3,24 +3,35 @@ import { withFirebase } from './../../Firebase';
 import { AuthUserContext } from './../../Auth';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
+import PropTypes from 'prop-types';
+
 
 class editPage extends Component{
-    constructor(props){
-        super(props);
+    static contextTypes = {
+        router: PropTypes.object,
+        store: PropTypes.object
+      };
+    
+      static propTypes = {
+        params: PropTypes.object,
+        post: PropTypes.object,
+      };
+    
+      constructor(props, context) {
+        super(props, context);
+    
+        this.state = {
+          ...this.state,
+        //   postId: this.props.params.postId,
+        //   post: {title: '', body: ''}
+        };
 
-        // this.state={
-        //     loading:true,
-        //     title:'',
-        //     content:'',
-        //     author:'',
-        //     isIndexPage:'',
-        //     status:''
-        // }
-    }
+        console.log('contextTypes',this.contextTypes);
+      }
 
-    // onSubmit = (event,authUser) => {
-
-    // }
+    componentDidMount () {
+        // console.log(this.context.redux.getState());
+      }
 
     render(){
         // const {title,content,isIndexPage,status} = this.state;
