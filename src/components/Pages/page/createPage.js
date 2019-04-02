@@ -1,21 +1,35 @@
 import React ,{Component} from 'react';
 import { AuthUserContext } from './../../Auth';
 import { withFirebase } from './../../Firebase';
-// import { compose } from 'recompose';
+import { withRouter } from 'react-router-dom';
+import { compose } from 'recompose';
+
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import * as routes from './../../../constants/routes';
 
 class createPage extends Component{
     constructor(props){
         super(props);
 
+        this.handleModelChange = this.handleModelChange.bind(this);
+
         this.state={
             loading:true,
             title:'',
-            content:'',
+            content:'test',
             author:'',
             isIndexPage:'',
             status:''
         }
     }
+    
+    handleModelChange = (model) =>{
+        this.setState({
+            content: model
+        });
+      }
+    
 
     onChange = event => {
         this.setState({ [event.target.name]: event.target.value });
@@ -37,7 +51,8 @@ class createPage extends Component{
             this.setState({ title: '', description: '', author: '', category: '', status: '' });
 
             event.preventDefault();
-            window.location.href='/home';
+            // window.location.href='/home';
+            this.props.history.push(routes.LANDING);
         // } else {
         //     this.validator.showMessages();
         //     this.forceUpdate();
@@ -57,11 +72,10 @@ class createPage extends Component{
                             <input name="title" className="form-control" value={title} onChange={this.onChange} type="text" />
                             
                             <label>Content</label>
-                            <input name="content" className="form-control" value={content} onChange={this.onChange} type="text" />
-
-                            <label>Mark as index</label>
-                            <input name="isIndexPage" className="form-control" value={isIndexPage} onChange={this.onChange} type="radio" />
-
+                            <ReactQuill value={this.state.content} onChange={this.handleModelChange} theme="snow"/>
+                            
+                            <input name="isIndexPage" value={isIndexPage} onChange={this.onChange} type="radio" /><label>Mark as index</label>
+                            <br/>
                             <label>Status</label>
                             <select onChange={this.onChange} className="form-control" name="status" value={status}>
                                 <option value="">Select</option>
@@ -80,4 +94,4 @@ class createPage extends Component{
     }
 }
 
-export default withFirebase(createPage);
+export default compose(withFirebase,withRouter)(createPage);

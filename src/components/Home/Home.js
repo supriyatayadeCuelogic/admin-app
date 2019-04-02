@@ -50,7 +50,7 @@ class Home extends Component{
         const{pages,loading} = this.state;
         return (
             <React.Fragment>                
-                <Pages data={this.state.pages} />
+                <Pages data={this.state.pages} loading={this.state.loading} />
             </React.Fragment>
         );
     }
