@@ -8,9 +8,9 @@ const withUserAuthentication = Component => {
     constructor(props) {
       super(props);
 
-      this.state = {
-        authUser: JSON.parse(localStorage.getItem('authUser')),
-      };
+      this.props.onSetAuthUser(
+        JSON.parse(localStorage.getItem('authUser')),
+      );
     }
 
     componentDidMount() {
