@@ -32,7 +32,6 @@ class Login extends Component{
             this.setState({ ...this.state });
             
             this.props.history.push(routes.LANDING);
-            console.log('props',this.props);
           })
           .catch(error => {
             this.setState({ error });

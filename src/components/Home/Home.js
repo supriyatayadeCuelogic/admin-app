@@ -21,45 +21,43 @@ class Home extends Component {
     }
 
 
-    componentDidMount() {
-        if (!this.props.pages) {
-            this.setState({ loading: true });
-        }
+    // componentDidMount() {
+    //     if (!this.state.pages) {
+    //         this.setState({ loading: true });
+    //     }
 
-        this.getPages();
-    }
+    //     this.getPages();
+    // }
 
-    getPages = () => {
-        this.setState({ loading: true });
+    // getPages = () => {
+    //     this.setState({ loading: true });
 
-        this.props.firebase.pages().limitToLast(this.state.limit).on(
-            'value', snapshot => {
+    //     this.props.firebase.pages().limitToLast(this.state.limit).on(
+    //         'value', snapshot => {
 
-                const pagesObj = snapshot.val();
-                if (pagesObj) {
-                    const pagesList = Object.keys(pagesObj).map(key => ({
-                        ...pagesObj[key],
-                        uid: key
-                    }));
-                    this.setState({ loading: false, pages: pagesList })
-                } else {
-                    this.setState({ loading: false, pages: null })
-                }
+    //             const pagesObj = snapshot.val();
+    //             if (pagesObj) {
+    //                 const pagesList = Object.keys(pagesObj).map(key => ({
+    //                     ...pagesObj[key],
+    //                     uid: key
+    //                 }));
+    //                 this.setState({ loading: false, pages: pagesList })
+    //             } else {
+    //                 this.setState({ loading: false, pages: null })
+    //             }
 
-            }
-        )
-    }
+    //         }
+    //     )
+    // }
 
     render() {
-        // debugger;
         const { pages, loading } = this.state;
-        console.log("home",this.props);
         return (
             <AuthUserContext.Consumer>
                 {authUser => (
                     authUser === null ? this.props.history.push(router.LOG_IN) :            
                         <React.Fragment>
-                            <Pages data={pages} loading={loading} />
+                            <Pages />
                         </React.Fragment>
 
                 )}

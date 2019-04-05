@@ -13,27 +13,19 @@ import { NavLink } from 'react-router-dom';
 import './../App/App.css';
 import PageErrBoundary from './../ErrorBoundries/PageErrBoundary';
 
+var _ = require('lodash');
+
 class Pages extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            loading: true,
-            list: []
+            loading: false,
+            pages: [],
+            limit: 10,
+            sortBy: 'desc',
         }
     }
-
-    /*handleInsertButtonClick = (onClick) => {
-        this.props.history.push('/createpage');
-      }
-      createCustomInsertButton = (onClick) => {
-        return (
-            <button className="btn btn-primary" onClick={ this.handleInsertButtonClick }>Add page</button>
-        );
-      }      
-      options = {
-        insertBtn: this.createCustomInsertButton
-      };*/
 
     edit = (event, page) => {
         this.props.applySetPage(page);
@@ -47,7 +39,44 @@ class Pages extends Component {
         }
     };
 
+    sortData = (event) => {
+        var list = this.state.pages;
+        let field = event.target.name;
+        list = _.orderBy(list, field, this.state.sortBy);
+        this.setState({ pages: list, sortBy: this.state.sortBy == 'asc' ? 'desc' : 'asc' });
+    }
+
+    componentDidMount() {
+        if (!this.state.pages) {
+            this.setState({ loading: true });
+        }
+
+        this.getPages();
+    }
+
+    getPages = () => {
+        this.setState({ loading: true });
+        this.props.firebase.pages().limitToLast(this.state.limit).on(
+            'value', snapshot => {
+                const pagesObj = snapshot.val();
+                if (pagesObj) {
+                    const pagesList = Object.keys(pagesObj).map(key => ({
+                        ...pagesObj[key],
+                        uid: key
+                    }));
+                    this.setState({ loading: false, pages: pagesList })
+                } else {
+                    this.setState({ loading: false, pages: null })
+                }
+            }
+        )
+    }
+
     render() {
+        const { pages } = this.state;
+        if (pages === null) {
+            return null;
+        }
         return (
             <PageErrBoundary>
                 <React.Fragment>
@@ -69,16 +98,21 @@ class Pages extends Component {
                                 className="table-striped table-bordered pageTable">
                                 <thead>
                                     <tr>
-                                        <th data-field="prenom" data-filter-control="input" data-sortable="true">Title</th>
-                                        <th data-field="date" data-filter-control="select" data-sortable="true">Content</th>
-                                        <th data-field="date" data-filter-control="select" data-sortable="true">Created At</th>
-                                        <th data-field="examen" data-filter-control="select" data-sortable="true">Status</th>
+                                        <th data-field="prenom" data-filter-control="input" data-sortable="true">
+                                            <a onClick={event => this.sortData(event)} name="title">Title</a>
+                                        </th>
+                                        <th data-field="date" data-filter-control="select" data-sortable="true">
+                                            <a onClick={event => this.sortData(event)} name="content">Content</a></th>
+                                        <th data-field="date" data-filter-control="select" data-sortable="true">
+                                        <a onClick={event => this.sortData(event)} name="createdAt">Created At</a></th>
+                                        <th data-field="examen" data-filter-control="select" data-sortable="true">
+                                        <a onClick={event => this.sortData(event)} name="status">Status</a></th>
                                         <th data-field="note" data-sortable="true">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {
-                                        this.props.data.map(key => (
+                                        pages.map(key => (
                                             <tr key={key.uid}>
                                                 <td>{key.title}</td>
                                                 <td>{ReactHtmlParser(key.content)}</td>
@@ -98,6 +132,15 @@ class Pages extends Component {
                             </table>
                         </Col>
                         <Col></Col>
+
+                        {/* <BootstrapTable data={this.props.data} striped hover options={this.options} insertRow>
+                            <TableHeaderColumn dataSort={true} isKey dataField='title'>Title</TableHeaderColumn>
+                            <TableHeaderColumn dataSort={true} dataField='content'>Content</TableHeaderColumn>
+                            <TableHeaderColumn dataSort={true} dataField='status'>Status</TableHeaderColumn>
+                            <TableHeaderColumn dataField='action' export={false}>Action</TableHeaderColumn>
+                        </BootstrapTable> */}
+
+
                     </Container>
 
                 </React.Fragment>

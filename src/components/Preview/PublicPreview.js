@@ -54,7 +54,6 @@ class PublicPreview extends React.Component {
     }
 
     render() {
-        console.log('render-props', this.props);
         const page = this.props.publicPreview;
         if (!page) {
             return null;

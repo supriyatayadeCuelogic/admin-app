@@ -40,6 +40,7 @@ const LoginUserNav = () => {
     return (<React.Fragment>
         <ul className="menu">
             <li><NavLink to={routers.LANDING}>Home</NavLink></li>
+            {/* <li><NavLink to='/list'>List</NavLink></li> */}
             {/* <li><NavLink to={`${routers.EDIT_PAGE}/:pageId`}>editPage</NavLink></li> */}
             <li><Logout /></li>
         </ul>
@@ -90,7 +91,9 @@ class Navigation extends React.Component {
                     <Route exact path={`${routers.EDIT_PAGE}/:id`} component={editPage} />
                     <Route exact path={`${routers.PREVIEW}/:id`} component={Preview} />
                     <Route exact path={`${routers.APP}/:id`} component={PublicPreview} />
+                    {/* <Route exact path='/list' component={ListPage} /> */}
                     <Route component={NoMatch} />
+                    
                 </Switch>
             </React.Fragment>
         )
