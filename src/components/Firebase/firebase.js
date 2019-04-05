@@ -30,7 +30,11 @@ class Firebase {
   doSignInWithEmailAndPassword = (email, password) =>
     this.auth.signInWithEmailAndPassword(email, password);
   
-  doSignOut = () => this.auth.signOut();
+  doSignOut = () => {
+    this.auth.signOut(); 
+    window.location.href='/login';
+    localStorage.removeItem('authUser');
+  };
 
   onAuthUserListener = (next, fallback) =>
     this.auth.onAuthStateChanged(authUser => {

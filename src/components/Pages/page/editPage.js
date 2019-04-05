@@ -1,73 +1,104 @@
-import React ,{Component} from 'react';
+import React, { Component } from 'react';
 import { withFirebase } from './../../Firebase';
 import { AuthUserContext } from './../../Auth';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import PropTypes from 'prop-types';
+import ReactQuill from 'react-quill';
+import * as routes from './../../../constants/routes';
+import PageErrBoundary from './../../ErrorBoundries/PageErrBoundary';
 
+class editPage extends Component {
 
-class editPage extends Component{
-    static contextTypes = {
-        router: PropTypes.object,
-        store: PropTypes.object
-      };
-    
-      static propTypes = {
-        params: PropTypes.object,
-        post: PropTypes.object,
-      };
-    
-      constructor(props, context) {
-        super(props, context);
-    
-        this.state = {
-          ...this.state,
-        //   postId: this.props.params.postId,
-        //   post: {title: '', body: ''}
-        };
+  constructor(props, context) {
+    super(props, context);
 
-        console.log('contextTypes',this.contextTypes);
-      }
+    this.state = {
+      ...this.state,
+      page: null
+    };
+  }
 
-    componentDidMount () {
-        // console.log(this.context.redux.getState());
-      }
-
-    render(){
-        // const {title,content,isIndexPage,status} = this.state;
-        console.log(this.props);
-        return (
-            <AuthUserContext.Consumer>
-                {authUser=>(
-                <React.Fragment>
-                    <form onSubmit={event=>this.onSubmit(event,authUser)}>
-                        <div className="form-group col-md-6">
-                            <h1>Create new page</h1>
-                            <label>Title</label>
-                            <input name="title" className="form-control" value={this.props.title} onChange={this.onChange} type="text" />
-                            
-                            <label>Content</label>
-                            <input name="content" className="form-control" value={this.props.content} onChange={this.onChange} type="text" />
-
-                            <label>Mark as index</label>
-                            <input name="isIndexPage" className="form-control" value={this.props.isIndexPage} onChange={this.onChange} type="radio" />
-
-                            <label>Status</label>
-                            <select onChange={this.onChange} className="form-control" name="status" value={this.props.status}>
-                                <option value="">Select</option>
-                                <option value="Draft">Draft</option>
-                                <option value="Published">Published</option>
-                            </select>
-
-                            <button type="submit" className="btn btn-primary">Update</button>
-                            
-                            </div>
-                        </form>
-                </React.Fragment>
-                )}
-            </AuthUserContext.Consumer>
-        );
+  componentDidMount() {
+    if (this.props && this.props.page) {
+      this.setState({
+        ...this.state,
+        title: this.props.page.title,
+        content: this.props.page.content,
+        isIndexPage: this.props.page.isIndexPage,
+        status: this.props.page.status
+      });
     }
+  }
+
+  handleModelChange = (model) => {
+    this.setState({
+      content: model
+    });
+  }
+
+  onChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
+  onSubmit(event, authUser) {
+    this.props.firebase.page(this.props.page.uid).set({
+      title: this.state.title,
+      content: this.state.content,
+      isIndexPage: this.state.isIndexPage,
+      status: this.state.status,
+      userId: authUser.uid,
+      author: authUser.username,
+      updatedAt: this.props.firebase.serverValue.TIMESTAMP
+    });
+
+    event.preventDefault();
+    this.props.history.push(routes.LANDING);
+  }
+
+  render() {
+    const { title, content, isIndexPage, status } = this.state;
+
+    return (
+      <PageErrBoundary>
+        <AuthUserContext.Consumer>
+          {authUser => (
+            authUser === null ? this.props.history.push(routes.LOG_IN) :
+
+              <React.Fragment>
+                <form onSubmit={event => this.onSubmit(event, authUser)}>
+                  <div className="form-group col-md-6">
+                    <h1>Edit page</h1>
+                    <label>Title</label>
+                    <input name="title" className="form-control" value={title} onChange={this.onChange} type="text" />
+
+                    <label>Content</label>
+                    <ReactQuill value={content} onChange={this.handleModelChange} theme="snow" />
+
+                    <label>Mark as index</label>
+                    <input name="isIndexPage" value={isIndexPage} onChange={this.onChange} type="radio" />
+
+                    <label>Status</label>
+                    <select onChange={this.onChange} className="form-control" name="status" value={status}>
+                      <option value="">Select</option>
+                      <option value="draft">Draft</option>
+                      <option value="published">Published</option>
+                    </select>
+
+                    <button type="submit" className="btn btn-primary">Update</button>
+                  </div>
+                </form>
+              </React.Fragment>
+          )}
+        </AuthUserContext.Consumer>
+      </PageErrBoundary>
+    );
+  }
 }
 
-export default compose(withFirebase,connect())(editPage);
+const mapStateToProps = (state) => ({
+  loading: state.pageSession.loading,
+  page: state.pageSession.page,
+  pages: state.pageSession.pages
+})
+
+export default compose(withFirebase, connect(mapStateToProps))(editPage);

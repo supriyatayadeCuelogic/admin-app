@@ -39,11 +39,11 @@ ul.menu li
     display: inline-block;
     padding: 0 20px;
     background:#3A332C;
-    border:1px solid #5E544A;
+    /* border:1px solid #5E544A; */
     color:#C4B09C;
     text-decoration:none;
-    font: bold 12px Arial;
-    line-height: 27px;
+    font: bold 14px Arial;
+    line-height: 50px;
     margin-right:1px;
 }
 
@@ -51,6 +51,18 @@ ul.menu li:hover, ul.menu a.current
 {
     background:#484037;
     color:#E6D4C3;
+}
+
+ul.menu li a {
+  color: white;
+}
+
+ul.menu li a:hover{
+  text-decoration: none;
+}
+
+.pageTable{
+  min-width: 600px;
 }
 
 @keyframes App-logo-spin {

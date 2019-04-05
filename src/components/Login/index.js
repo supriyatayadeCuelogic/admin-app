@@ -1,5 +1,5 @@
 import React ,{Component} from 'react';
-import { withRouter,Route, Router,Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 import { withFirebase } from './../Firebase';
 import * as routes from './../../constants/routes';
@@ -30,7 +30,9 @@ class Login extends Component{
           .doSignInWithEmailAndPassword(email, password)
           .then(() => {
             this.setState({ ...this.state });
+            
             this.props.history.push(routes.LANDING);
+            console.log('props',this.props);
           })
           .catch(error => {
             this.setState({ error });
