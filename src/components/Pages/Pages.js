@@ -12,8 +12,9 @@ import { Container, Col } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import './../App/App.css';
 import PageErrBoundary from './../ErrorBoundries/PageErrBoundary';
+import './../App/App.css';
 
-var _ = require('lodash');
+const _ = require('lodash');
 
 class Pages extends Component {
     constructor(props) {
@@ -24,6 +25,8 @@ class Pages extends Component {
             pages: [],
             limit: 10,
             sortBy: 'desc',
+            activePage: 1,
+            searchText:''
         }
     }
 
@@ -43,7 +46,7 @@ class Pages extends Component {
         var list = this.state.pages;
         let field = event.target.name;
         list = _.orderBy(list, field, this.state.sortBy);
-        this.setState({ pages: list, sortBy: this.state.sortBy == 'asc' ? 'desc' : 'asc' });
+        this.setState({ pages: list, sortBy: this.state.sortBy === 'asc' ? 'desc' : 'asc' });
     }
 
     componentDidMount() {
@@ -64,7 +67,11 @@ class Pages extends Component {
                         ...pagesObj[key],
                         uid: key
                     }));
-                    this.setState({ loading: false, pages: pagesList })
+                    this.setState({ loading: false, pages: pagesList });
+                    let pagesData = this.getPaginatedItems(pagesList, 1, 3);
+                    this.props.applySetPages(pagesData.data);
+                    this.setState({ paginationObj: pagesData });
+
                 } else {
                     this.setState({ loading: false, pages: null })
                 }
@@ -72,11 +79,69 @@ class Pages extends Component {
         )
     }
 
+    getNextPage(page) {
+        console.log(page);
+        let pagesData = this.getPaginatedItems(this.state.pages, page, 3);
+        this.props.applySetPages(pagesData.data);
+        this.setState({ paginationObj: pagesData });
+    }
+
+    getPaginatedItems(items, page, pageSize) {
+        var pg = page || 1,
+            pgSize = pageSize || 100,
+            offset = (pg - 1) * pgSize,
+            pagedItems = _.drop(items, offset).slice(0, pgSize);
+        return {
+            page: pg,
+            pageSize: pgSize,
+            total: items.length,
+            total_pages: Math.ceil(items.length / pgSize),
+            data: pagedItems
+        };
+    }
+
+    onSeach = event => {
+        console.log('state',this.state);
+        console.log('props',this.props);
+        this.setState({ pages: this.props.pages });
+        if (this.state.searchText == '') {
+            var sortedObject = this.state.pages;
+        } else {
+            var sortedObject = _.filter(this.props.pages, { 'title': this.state.searchText });
+        }
+        
+        this.props.applySetPages(sortedObject);
+    }
+
+    onChangeSearch = (event) => {
+        this.setState({ [event.target.name]: event.target.value });
+    }
+
     render() {
-        const { pages } = this.state;
+        const { pages } = this.props;
         if (pages === null) {
             return null;
         }
+        const { searchText } = this.state;
+
+        const paginationObj = this.state.paginationObj;
+        if (!paginationObj) {
+            return null;
+        }
+
+        const pglist = []
+        let selected = '';
+        var j = 1;
+        for (var i = 1; i <= paginationObj.total_pages; i++) {
+            selected = 'page-item';
+            if (paginationObj.page == i) {
+                selected = 'page-item active';
+            }
+            const s = i;
+            pglist.push(<li className={selected} key={i}><a className="page-link" data={i} onClick={(i) => this.getNextPage(s)}>{i}</a></li>)
+
+        }
+
         return (
             <PageErrBoundary>
                 <React.Fragment>
@@ -85,7 +150,11 @@ class Pages extends Component {
                         <Col></Col>
                         <Col xs={6} md={6} lg={6}>
                             {this.props.loading && <div>Loading....</div>}
-                            <NavLink className="btn btn-primary" to={router.CREATE_PAGE}>Create</NavLink>
+                            <NavLink className="btn btn-primary btnSpace" to={router.CREATE_PAGE}>Create</NavLink>
+                            
+                           
+                            <input type="text" name="searchText" className="form-control smallText" placeholder="Search..." onChange={event => {this.onChangeSearch(event)}} value={searchText}></input>
+                            <button onClick={event=>this.onSeach(event)} className="btn btn-primary">Search</button>
                             <br />
                             <br />
                             <table id="table"
@@ -104,9 +173,9 @@ class Pages extends Component {
                                         <th data-field="date" data-filter-control="select" data-sortable="true">
                                             <a onClick={event => this.sortData(event)} name="content">Content</a></th>
                                         <th data-field="date" data-filter-control="select" data-sortable="true">
-                                        <a onClick={event => this.sortData(event)} name="createdAt">Created At</a></th>
+                                            <a onClick={event => this.sortData(event)} name="createdAt">Created At</a></th>
                                         <th data-field="examen" data-filter-control="select" data-sortable="true">
-                                        <a onClick={event => this.sortData(event)} name="status">Status</a></th>
+                                            <a onClick={event => this.sortData(event)} name="status">Status</a></th>
                                         <th data-field="note" data-sortable="true">Action</th>
                                     </tr>
                                 </thead>
@@ -121,9 +190,9 @@ class Pages extends Component {
                                                 </Moment></td>
                                                 <td>{key.status}</td>
                                                 <td>
-                                                    <button className="btn btn-primary" onClick={event => this.edit(event, key)}> Edit </button>
-                                                    <button className="btn btn-primary" onClick={event => this.delete(event, key.uid)}> Delete </button>
-                                                    <Link className="btn btn-primary" to={`${router.PREVIEW}/${key.title}`}> Preview </Link>
+                                                    <button className="btn btn-primary btnSpace" onClick={event => this.edit(event, key)}> Edit </button>
+                                                    <button className="btn btn-primary btnSpace" onClick={event => this.delete(event, key.uid)}> Delete </button>
+                                                    <Link className="btn btn-primary btnSpace" to={`${router.PREVIEW}/${key.title}`}> Preview </Link>
                                                 </td>
                                             </tr>
                                         ))
@@ -132,15 +201,16 @@ class Pages extends Component {
                             </table>
                         </Col>
                         <Col></Col>
-
-                        {/* <BootstrapTable data={this.props.data} striped hover options={this.options} insertRow>
-                            <TableHeaderColumn dataSort={true} isKey dataField='title'>Title</TableHeaderColumn>
-                            <TableHeaderColumn dataSort={true} dataField='content'>Content</TableHeaderColumn>
-                            <TableHeaderColumn dataSort={true} dataField='status'>Status</TableHeaderColumn>
-                            <TableHeaderColumn dataField='action' export={false}>Action</TableHeaderColumn>
-                        </BootstrapTable> */}
-
-
+                        
+                        <br/>
+                        <br/>
+                        <div>
+                            <nav aria-label="Page navigation example">
+                                <ul className="pagination justify-content-center">
+                                    {pglist}
+                                </ul>
+                            </nav>
+                        </div>
                     </Container>
 
                 </React.Fragment>
@@ -152,12 +222,20 @@ class Pages extends Component {
 
 
 const mapStateToProps = (state) => ({
-    loading: state.loading
+    loading: state.loading,
+    pages: Object.keys(state.pageSession.pages || {}).map(
+        key => ({
+            ...state.pageSession.pages[key],
+            uid: key,
+        }),
+    ),
 })
 
 const mapDispatchToProps = dispatch => ({
     applySetPage: page =>
-        dispatch({ type: 'EDIT_PAGE', page })
+        dispatch({ type: 'EDIT_PAGE', page }),
+    applySetPages: pages =>
+        dispatch({ type: 'PAGES_SET', pages })
 });
 
 export default compose(

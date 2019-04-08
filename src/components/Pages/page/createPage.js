@@ -18,7 +18,7 @@ class createPage extends Component {
         this.state = {
             loading: true,
             title: '',
-            content: 'test',
+            content: '',
             author: '',
             isIndexPage: '',
             status: ''
