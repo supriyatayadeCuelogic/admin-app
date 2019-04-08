@@ -12,6 +12,7 @@
     "react-bootstrap": "^1.0.0-beta.6",
     "react-bootstrap-table": "^4.3.1",
     "react-compose": "^2.0.0",
+    "react-dev-utils": "^8.0.0",
     "react-dom": "^16.8.6",
     "react-html-parser": "^2.0.2",
     "react-moment": "^0.8.4",
@@ -23,9 +24,9 @@
     "redux": "^4.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -36,5 +37,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "react-app-rewired": "^2.1.1"
+  }
 }

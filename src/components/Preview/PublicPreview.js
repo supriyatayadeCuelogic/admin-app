@@ -5,8 +5,6 @@ import { withRouter } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { AuthUserContext } from './../Auth';
-import * as routes from './../../constants/routes';
 
 class PublicPreview extends React.Component {
     constructor(props) {
@@ -14,7 +12,7 @@ class PublicPreview extends React.Component {
 
         this.state = {
             page: [],
-            loading: false,
+            loading: null,
             pageId: null
         }
     }
@@ -30,9 +28,9 @@ class PublicPreview extends React.Component {
     }
 
     fetchData() {
-        const id = this.props.match.params.id;       
+        const id = this.props.match.params.id;
 
-        this.setState({ pageId: id });
+        this.setState({ pageId: id, loading: true });
         this.props.firebase.pages().orderByChild('title').equalTo(id).on('value', snapshot => {
             const pagesObject = snapshot.val();
             if (pagesObject) {
@@ -47,6 +45,7 @@ class PublicPreview extends React.Component {
                 });
 
                 this.props.applySetPublicPagePreview(this.state.page);
+                this.props.applySetLoading(false);
             } else {
                 this.setState({ page: null, loading: false });
             }
@@ -59,19 +58,24 @@ class PublicPreview extends React.Component {
             return null;
         }
 
+        const { loading } = this.state;
+
         return (
             // <AuthUserContext.Consumer>
             //     {authUser => (
             //         authUser === null ? this.props.history.push(routes.LOG_IN) :
-                        <React.Fragment>
-                            <Container>
-                                <Row>
-                                    <Col></Col>
-                                    <Col>{ReactHtmlParser(page.content)}</Col>
-                                    <Col></Col>
-                                </Row>
-                            </Container>
-                        </React.Fragment>
+            <React.Fragment>
+                <Container>
+                    <Row>
+                        <Col></Col>
+                        <Col>
+                            {loading && <div>Loading....</div>}
+                            {ReactHtmlParser(page.content)}
+                        </Col>
+                        <Col></Col>
+                    </Row>
+                </Container>
+            </React.Fragment>
             //     )}
             // </AuthUserContext.Consumer>
         )
@@ -85,7 +89,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = dispatch => ({
     applySetPublicPagePreview: page =>
-        dispatch({ type: 'SET_PUBLIC_PREVIEW', page })
+        dispatch({ type: 'SET_PUBLIC_PREVIEW', page }),
+    applySetLoading: loading =>
+        dispatch({ type: 'SET_LOADING', loading })
 });
 
 

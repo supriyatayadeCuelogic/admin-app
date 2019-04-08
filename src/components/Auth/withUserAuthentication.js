@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { compose } from 'recompose';
 
 import { withFirebase } from '../Firebase';
@@ -47,10 +46,10 @@ const withUserAuthentication = Component => {
     }
   }
 
-  const mapDispatchToProps = dispatch => ({
-    onSetAuthUser: authUser =>
-      dispatch({ type: 'AUTH_USER_SET', authUser }),
-  });
+  // const mapDispatchToProps = dispatch => ({
+  //   onSetAuthUser: authUser =>
+  //     dispatch({ type: 'AUTH_USER_SET', authUser }),
+  // });
 
   return compose(
     withFirebase,

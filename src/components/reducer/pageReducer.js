@@ -2,8 +2,9 @@ const INITIAL_STATE = {
     pages: [],
     limit: 5,
     page: null,
-    publicPreview:null,
-    privatePreview:null,
+    publicPreview: null,
+    privatePreview: null,
+    loading: null
 };
 
 
@@ -22,14 +23,19 @@ const applySetPage = (state, action) => ({
     page: action.page,
 });
 
-const applySetPublicPagePreview = (state,action) =>({
+const applySetPublicPagePreview = (state, action) => ({
     ...state,
-    publicPreview:action.page
+    publicPreview: action.page
 })
 
-const applySetPrivatePagePreview = (state,action) =>({
+const applySetPrivatePagePreview = (state, action) => ({
     ...state,
-    privatePreview:action.page
+    privatePreview: action.page
+})
+
+const applySetLoading = (state, action) => ({
+    ...state,
+    loading: action.loading
 })
 
 const pageReducer = (state = INITIAL_STATE, action) => {
@@ -49,6 +55,8 @@ const pageReducer = (state = INITIAL_STATE, action) => {
         case 'SET_PRIVATE_PREVIEW':
             return applySetPrivatePagePreview(state, action);
 
+        case 'SET_LOADING':
+            return applySetLoading(state, action);
         default: return state;
     }
 }

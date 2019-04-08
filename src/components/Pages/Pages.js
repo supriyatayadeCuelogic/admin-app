@@ -26,8 +26,8 @@ class Pages extends Component {
             limit: 10,
             sortBy: 'desc',
             activePage: 1,
-            searchText:'',
-            perPage:3
+            searchText: '',
+            perPage: 3
         }
     }
 
@@ -47,7 +47,8 @@ class Pages extends Component {
         var list = this.state.pages;
         let field = event.target.name;
         list = _.orderBy(list, field, this.state.sortBy);
-        this.setState({ pages: list, sortBy: this.state.sortBy === 'asc' ? 'desc' : 'asc' });
+        this.setState({activePage:1 ,sortBy: this.state.sortBy === 'asc' ? 'desc' : 'asc' });
+        this.props.applySetPages(list);
     }
 
     componentDidMount() {
@@ -92,6 +93,7 @@ class Pages extends Component {
             pgSize = pageSize || 100,
             offset = (pg - 1) * pgSize,
             pagedItems = _.drop(items, offset).slice(0, pgSize);
+        this.setState({ activePage: pg });
         return {
             page: pg,
             pageSize: pgSize,
@@ -99,18 +101,20 @@ class Pages extends Component {
             total_pages: Math.ceil(items.length / pgSize),
             data: pagedItems
         };
+
     }
 
     onSeach = event => {
-        console.log('state',this.state);
-        console.log('props',this.props);
+        console.log('state', this.state);
+        console.log('props', this.props);
         this.setState({ pages: this.props.pages });
-        if (this.state.searchText == '') {
-            var sortedObject = this.state.pages;
+        var sortedObject;
+        if (this.state.searchText === '') {
+            sortedObject = this.state.pages;
         } else {
-            var sortedObject = _.filter(this.props.pages, { 'title': this.state.searchText });
+            sortedObject = _.filter(this.props.pages, { 'title': this.state.searchText });
         }
-        
+
         this.props.applySetPages(sortedObject);
     }
 
@@ -132,17 +136,17 @@ class Pages extends Component {
 
         const pglist = []
         let selected = '';
-        var j = 1;
         for (var i = 1; i <= paginationObj.total_pages; i++) {
             selected = 'page-item';
-            if (paginationObj.page == i) {
+            if (paginationObj.page === i) {
                 selected = 'page-item active';
             }
             const s = i;
+            // eslint-disable-next-line
             pglist.push(<li className={selected} key={i}><a className="page-link" data={i} onClick={(i) => this.getNextPage(s)}>{i}</a></li>)
 
         }
-
+        console.log('pages',pages);
         return (
             <PageErrBoundary>
                 <React.Fragment>
@@ -150,12 +154,12 @@ class Pages extends Component {
                         {/* <Row> */}
                         <Col></Col>
                         <Col xs={6} md={6} lg={6}>
-                            {this.props.loading && <div>Loading....</div>}
+                            {this.state.loading && <div>Loading....</div>}
                             <NavLink className="btn btn-primary btnSpace" to={router.CREATE_PAGE}>Create</NavLink>
-                            
-                           
-                            <input type="text" name="searchText" className="form-control smallText" placeholder="Search..." onChange={event => {this.onChangeSearch(event)}} value={searchText}></input>
-                            <button onClick={event=>this.onSeach(event)} className="btn btn-primary">Search</button>
+
+
+                            <input type="text" name="searchText" className="form-control smallText" placeholder="Search..." onChange={event => { this.onChangeSearch(event) }} value={searchText}></input>
+                            <button onClick={event => this.onSeach(event)} className="btn btn-primary">Search</button>
                             <br />
                             <br />
                             <table id="table"
@@ -202,9 +206,9 @@ class Pages extends Component {
                             </table>
                         </Col>
                         <Col></Col>
-                        
-                        <br/>
-                        <br/>
+
+                        <br />
+                        <br />
                         <div>
                             <nav aria-label="Page navigation example">
                                 <ul className="pagination justify-content-center">

@@ -5,7 +5,7 @@ import Pages from './../Pages';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import * as router from './../../constants/routes';
-import { withAuthorization } from './../Auth';
+
 import { AuthUserContext } from './../Auth';
 
 class Home extends Component {
@@ -19,39 +19,8 @@ class Home extends Component {
             limit: 10
         }
     }
-
-
-    // componentDidMount() {
-    //     if (!this.state.pages) {
-    //         this.setState({ loading: true });
-    //     }
-
-    //     this.getPages();
-    // }
-
-    // getPages = () => {
-    //     this.setState({ loading: true });
-
-    //     this.props.firebase.pages().limitToLast(this.state.limit).on(
-    //         'value', snapshot => {
-
-    //             const pagesObj = snapshot.val();
-    //             if (pagesObj) {
-    //                 const pagesList = Object.keys(pagesObj).map(key => ({
-    //                     ...pagesObj[key],
-    //                     uid: key
-    //                 }));
-    //                 this.setState({ loading: false, pages: pagesList })
-    //             } else {
-    //                 this.setState({ loading: false, pages: null })
-    //             }
-
-    //         }
-    //     )
-    // }
-
+    
     render() {
-        const { pages, loading } = this.state;
         return (
             <AuthUserContext.Consumer>
                 {authUser => (
