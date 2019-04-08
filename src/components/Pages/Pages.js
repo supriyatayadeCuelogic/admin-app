@@ -26,7 +26,8 @@ class Pages extends Component {
             limit: 10,
             sortBy: 'desc',
             activePage: 1,
-            searchText:''
+            searchText:'',
+            perPage:3
         }
     }
 
@@ -68,7 +69,7 @@ class Pages extends Component {
                         uid: key
                     }));
                     this.setState({ loading: false, pages: pagesList });
-                    let pagesData = this.getPaginatedItems(pagesList, 1, 3);
+                    let pagesData = this.getPaginatedItems(pagesList, 1, this.state.perPage);
                     this.props.applySetPages(pagesData.data);
                     this.setState({ paginationObj: pagesData });
 
@@ -81,7 +82,7 @@ class Pages extends Component {
 
     getNextPage(page) {
         console.log(page);
-        let pagesData = this.getPaginatedItems(this.state.pages, page, 3);
+        let pagesData = this.getPaginatedItems(this.state.pages, page, this.state.perPage);
         this.props.applySetPages(pagesData.data);
         this.setState({ paginationObj: pagesData });
     }
